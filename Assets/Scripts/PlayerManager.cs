@@ -1,6 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
+using TMPro;
 
 public class PlayerManager : MonoBehaviour
 {
@@ -10,19 +12,35 @@ public class PlayerManager : MonoBehaviour
 
     private GameManager gameManager;
 
-    // Start is called before the first frame update
+    public float interactRange = 1f;
+    public KeyCode interactKey = KeyCode.F; //F to interact
+    public TextMeshProUGUI interactionText; //Press F text
+    private Interactable currentInteractable; //Track nearest interactable
+
     void Start()
     {
         playerRigidbody2D = GetComponent<Rigidbody2D>();
         gameManager = FindObjectOfType<GameManager>();
+
+         if (interactionText != null)
+        {
+            interactionText.gameObject.SetActive(false);
+        }
     }
 
-    // Update is called once per frame
     void Update()
     {
         HandleMovement();
+        DetectInteractable();
+
+        if (Input.GetKeyDown(interactKey) && currentInteractable != null)
+        {
+            currentInteractable.Interact();
+        }
+        
     }
 
+    //----------------Movement Code-----------------------------------------
     private void HandleMovement(){
         float moveX = 0f;
         float moveY = 0f;
@@ -50,5 +68,44 @@ public class PlayerManager : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collider){
         Debug.Log("Trigger!");
+    }
+
+    //----------------Interact Code-----------------------------------------
+
+    void DetectInteractable()
+    {
+        Collider2D[] colliders = Physics2D.OverlapCircleAll(transform.position, interactRange);
+        Interactable closestInteractable = null;
+        float closestDistance = float.MaxValue;
+
+        foreach (Collider2D collider in colliders)
+        {
+            Interactable interactable = collider.GetComponent<Interactable>();
+            if (interactable != null)
+            {
+                float distance = Vector2.Distance(transform.position, collider.transform.position);
+                if (distance < closestDistance)
+                {
+                    closestDistance = distance;
+                    closestInteractable = interactable;
+                }
+            }
+        }
+
+        currentInteractable = closestInteractable;
+
+        // interaction text
+        if (interactionText != null)
+        {
+            if (currentInteractable != null)
+            {
+                //interactionText.text = "Press F to interact";
+                interactionText.gameObject.SetActive(true);
+            }
+            else
+            {
+                interactionText.gameObject.SetActive(false);
+            }
+        }
     }
 }
