@@ -18,6 +18,9 @@ public class PlayerManager : MonoBehaviour
     public TextMeshProUGUI interactionText; //Press F text
     private Interactable currentInteractable; //Track nearest interactable
 
+    public int coinCount = 0;
+    public TextMeshProUGUI coinText;
+
     void Start()
     {
         playerRigidbody2D = GetComponent<Rigidbody2D>();
@@ -74,8 +77,20 @@ public class PlayerManager : MonoBehaviour
         playerRigidbody2D.MovePosition(transform.position + moveDir * playerSpeed * Time.deltaTime);
     }
 
-    private void OnTriggerEnter2D(Collider2D collider){
-        Debug.Log("Trigger!");
+    private void OnTriggerEnter2D(Collider2D collider)
+    {
+
+        if (collider.CompareTag("Coin")) // object has the tag "Coin"
+        {   
+            Debug.Log("Collected Coin!");
+            CollectCoin(collider.gameObject);
+        }
+    }
+
+    void CollectCoin(GameObject coin)
+    {
+        coinCount++;
+        Destroy(coin);
     }
 
     //----------------Interact Code-----------------------------------------
