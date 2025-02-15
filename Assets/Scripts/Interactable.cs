@@ -7,6 +7,7 @@ using UnityEngine;
 
 public class Interactable : MonoBehaviour
 {
+    public bool hasInteracted = false;
     public virtual void Interact() //override
     {
         Debug.Log("Interacted with " + gameObject.name);

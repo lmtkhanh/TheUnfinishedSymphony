@@ -6,6 +6,7 @@ using TMPro;
 
 public class PlayerManager : MonoBehaviour
 {
+    public bool canMove = true;
     private const float playerSpeed = 13f;
     private Vector3 moveDir;
     private Rigidbody2D playerRigidbody2D;
@@ -30,7 +31,7 @@ public class PlayerManager : MonoBehaviour
 
     void Update()
     {
-        HandleMovement();
+        if (canMove) HandleMovement();
         DetectInteractable();
 
         if (Input.GetKeyDown(interactKey) && currentInteractable != null)
@@ -41,6 +42,13 @@ public class PlayerManager : MonoBehaviour
     }
 
     //----------------Movement Code-----------------------------------------
+    public void StopPlayerMovement(){
+        canMove = false;
+    }
+
+    public void StartPlayerMovement(){
+        canMove = true;
+    }
     private void HandleMovement(){
         float moveX = 0f;
         float moveY = 0f;
@@ -81,7 +89,7 @@ public class PlayerManager : MonoBehaviour
         foreach (Collider2D collider in colliders)
         {
             Interactable interactable = collider.GetComponent<Interactable>();
-            if (interactable != null)
+            if (interactable != null && !interactable.hasInteracted)
             {
                 float distance = Vector2.Distance(transform.position, collider.transform.position);
                 if (distance < closestDistance)
