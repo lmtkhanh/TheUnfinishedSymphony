@@ -363,13 +363,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   hasInteracted: 0
+  isInteracting: 0
   dialogue:
-    name: Ghost Ghostson
+    npcName: Ghost Ghostson
     sentences:
     - Hello! How are you doing this fine day?
     - It's a lovely day ain't it. In this empty, blank world.
     - Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec eu enim dolor.
     - Mauris quis magna ac justo porta sodales. Duis faucibus dui a finibus aliquam.
+    isPlayerSpeaking: 00000100
 --- !u!212 &390049319
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -1519,6 +1521,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   hasInteracted: 0
+  isInteracting: 0
 --- !u!1 &1182191143
 GameObject:
   m_ObjectHideFlags: 0
@@ -3040,6 +3043,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   hasInteracted: 0
+  isInteracting: 0
 --- !u!61 &2092599144
 BoxCollider2D:
   m_ObjectHideFlags: 0

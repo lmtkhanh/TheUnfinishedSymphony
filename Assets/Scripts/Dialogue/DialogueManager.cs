@@ -13,9 +13,12 @@ public class DialogueManager : MonoBehaviour
     public Animator animator;
 
     private Queue<string> sentences;
+    private Queue<bool> isPlayerSpeakingQueue;
+    private string npcName;
     void Start()
     {
         sentences = new Queue<string>();
+        isPlayerSpeakingQueue = new Queue<bool>(); //check what sentences the player is speaking
         
     }
 
@@ -23,12 +26,16 @@ public class DialogueManager : MonoBehaviour
         player.StopPlayerMovement(); //prevent player from moving while dialogue is running
 
         animator.SetBool("isOpen", true);
-        nameText.text = dialogue.name;
+        nameText.text = dialogue.npcName;
+        npcName = dialogue.npcName;
 
         sentences.Clear();
+        isPlayerSpeakingQueue.Clear();
 
-        foreach (string sentence in dialogue.sentences){
-            sentences.Enqueue(sentence);
+       for (int i = 0; i < dialogue.sentences.Length; i++)
+        {
+            sentences.Enqueue(dialogue.sentences[i]);
+            isPlayerSpeakingQueue.Enqueue(dialogue.isPlayerSpeaking[i]);
         }
         DisplayNextSentence();
     }
@@ -40,6 +47,10 @@ public class DialogueManager : MonoBehaviour
         }
 
         string sentence = sentences.Dequeue();
+        bool isPlayerSpeaking = isPlayerSpeakingQueue.Dequeue();
+
+        nameText.text = isPlayerSpeaking ? "Lucien" : npcName; //change character name
+
         StopAllCoroutines();
         StartCoroutine(TypeSentence (sentence));
 
@@ -56,6 +67,7 @@ public class DialogueManager : MonoBehaviour
     void EndDialogue(){
         animator.SetBool("isOpen", false);
         player.StartPlayerMovement();
+        
     }
 
 

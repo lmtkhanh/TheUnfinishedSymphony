@@ -8,6 +8,7 @@ using UnityEngine;
 public class Interactable : MonoBehaviour
 {
     public bool hasInteracted = false;
+    public bool isInteracting = false;
     public virtual void Interact() //override
     {
         Debug.Log("Interacted with " + gameObject.name);
