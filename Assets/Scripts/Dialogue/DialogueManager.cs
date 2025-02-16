@@ -6,7 +6,7 @@ using TMPro;
 
 public class DialogueManager : MonoBehaviour
 {
-    public PlayerManager player; // ref to player
+    public PlayerController player; // ref to player
     public TextMeshProUGUI nameText;
     public TextMeshProUGUI dialogueText;
     public Image characterPortrait;

@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 
-public class PlayerManager : MonoBehaviour
+public class PlayerController: MonoBehaviour
 {
     public bool canMove = true;
     private const float playerSpeed = 13f;
@@ -12,19 +12,18 @@ public class PlayerManager : MonoBehaviour
     private Rigidbody2D playerRigidbody2D;
 
     private GameManager gameManager;
+    private PlayerManager playerManager;
 
     public float interactRange = 1f;
     public KeyCode interactKey = KeyCode.F; //F to interact
     public TextMeshProUGUI interactionText; //Press F text
     private Interactable currentInteractable; //Track nearest interactable
 
-    public int coinCount = 0;
-    public TextMeshProUGUI coinText;
-
     void Start()
     {
         playerRigidbody2D = GetComponent<Rigidbody2D>();
         gameManager = FindObjectOfType<GameManager>();
+        playerManager = FindObjectOfType<PlayerManager>();
 
          if (interactionText != null)
         {
@@ -89,7 +88,7 @@ public class PlayerManager : MonoBehaviour
 
     void CollectCoin(GameObject coin)
     {
-        coinCount++;
+        playerManager.UpdateCoinCount();
         Destroy(coin);
     }
 
