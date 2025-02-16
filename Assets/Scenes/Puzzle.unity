@@ -451,7 +451,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Timer 00:00
+  m_text: 'Timer:'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -930,6 +930,7 @@ MonoBehaviour:
   - {fileID: 1920445660}
   - {fileID: 42387181}
   - {fileID: 1340135949}
+  timerText: {fileID: 214737425}
 --- !u!1 &729962103
 GameObject:
   m_ObjectHideFlags: 0
@@ -1816,7 +1817,6 @@ GameObject:
   - component: {fileID: 1241318166}
   - component: {fileID: 1241318165}
   - component: {fileID: 1241318164}
-  - component: {fileID: 1241318167}
   - component: {fileID: 1241318168}
   m_Layer: 5
   m_Name: Play Button
@@ -1927,23 +1927,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1241318162}
   m_CullTransparentMesh: 1
---- !u!114 &1241318167
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1241318162}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: eb84f35e975f6be419294027c820d687, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  audioSource: {fileID: 599624486}
-  musicSegment: {fileID: 8300000, guid: dec362715db5c9a4eb4e274e879138f6, type: 3}
-  noteClips: []
-  playButton: {fileID: 1241318164}
-  noteButtons: []
 --- !u!114 &1241318168
 MonoBehaviour:
   m_ObjectHideFlags: 0
