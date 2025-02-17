@@ -8,6 +8,12 @@ public class NoteSpawner : MonoBehaviour
     //the attack bar
     public GameObject folderObject;
 
+    //player position
+    public GameObject player;
+
+    //enemy position
+    public GameObject enemy;
+
     //the attack hit point (where you are supposed to hit the note)
     public GameObject hitPointObject;
 
@@ -15,7 +21,7 @@ public class NoteSpawner : MonoBehaviour
     private BeatManager beatManager;
 
     //how many beats it take for note to move from spawn point to the hit point (effectively it controls speed of how fast the note is moving)
-    public float beatsToHitPoint = 4;
+    public float attackBeatsToHitPoint = 4;
     private float noteSpeed;
 
     void Start()
@@ -32,7 +38,7 @@ public class NoteSpawner : MonoBehaviour
     public void setNoteSpeed()
     {
         float crotchet = beatManager.getCrotchet(); 
-        float timeToHitPoint = beatsToHitPoint * crotchet;
+        float timeToHitPoint = attackBeatsToHitPoint * crotchet;
 
         // Calculate distance from spawn to hit point
         float spawnX = Camera.main.ScreenToWorldPoint(new Vector2(Screen.width, 0)).x + 1;
@@ -45,15 +51,44 @@ public class NoteSpawner : MonoBehaviour
 
     public Note SpawnNote(float beat)
     {
-        //set the spawn point, x equal some arbitary spawn point (adjust), y is just the y value of the attack bar object
-        Vector2 folderPosition = folderObject.transform.position;
-        float spawnX = Camera.main.ScreenToWorldPoint(new Vector2(Screen.width, 0)).x + 1;
-        Vector2 spawnPosition = new Vector2(spawnX, folderPosition.y - 1.12f);
+            //Debug.Log("spawning attack mode notes");
+            //set the spawn point, x equal some arbitary spawn point (adjust), y is just the y value of the attack bar object
+            Vector2 folderPosition = folderObject.transform.position;
+            float spawnX = Camera.main.ScreenToWorldPoint(new Vector2(Screen.width, 0)).x + 1;
+            Vector2 spawnPosition = new Vector2(spawnX, folderPosition.y - 1.12f);
 
-        //instantiate the note
+            //instantiate the note
+            GameObject newNote = Instantiate(notePrefab, spawnPosition, Quaternion.identity);
+            Note note = newNote.GetComponent<Note>();
+            note.Initialize(1, beat, hitPointObject.transform.position, noteSpeed, beatManager);
+            return note; 
+    }
+
+    public Note SpawnDefendNote(float beat)
+    {
+        // Debug.Log("spawning defend mode notes");
+
+        // Reference the character's position directly (assuming you have a character object, e.g., "playerObject")
+        Vector2 characterPosition = enemy.transform.position; // Reference to the character's position
+
+        // Define the radius for the curve around the character
+        float radius = 2f;
+        float curveHeightOffset = 1f; // Height offset to ensure the curve is centered around the character
+
+        // Calculate the angle for the curve (simple sine wave pattern)
+        float angle = Mathf.PI * (beat % 8); // Use modulo to ensure the beat stays within 8 for idle duration
+
+        // Calculate the X and Y positions based on sine and cosine for a curved pattern
+        float xPosition = characterPosition.x + Mathf.Cos(angle) * radius;
+        float yPosition = characterPosition.y + curveHeightOffset + Mathf.Sin(angle) * radius;
+
+        Vector2 spawnPosition = new Vector2(xPosition, yPosition);
+
+        // Instantiate the note
         GameObject newNote = Instantiate(notePrefab, spawnPosition, Quaternion.identity);
         Note note = newNote.GetComponent<Note>();
-        note.Initialize(beat, hitPointObject.transform.position.x, noteSpeed, beatManager);
+        note.Initialize(2, beat, player.transform.position, 0, beatManager);
+
         return note;
     }
 }

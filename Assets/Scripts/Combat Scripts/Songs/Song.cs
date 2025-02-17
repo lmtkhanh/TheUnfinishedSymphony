@@ -5,7 +5,12 @@ using UnityEngine;
 
 public class Song : MonoBehaviour
 {
-    public List<float> beatsToHit; // List of beats where the notes should be hit, set this manually
+    public List<float> attackModeBeats; //list of beats where game switch to attack mode
+    public List<float> defendModeBeats; //list of beats where game switch to defend mode
+    public List<float> cutsceneModeBeats; //list of beats where game switch to cutscene mode
+
+    public List<float> attackBeatsToHit; // List of beats where the notes should be hit, set this manually
+    public List<List<float>> defendBeatsToHit; // List of beats where the notes should be hit, set this manually
 
     //the BPM of the song
     public float BPM;

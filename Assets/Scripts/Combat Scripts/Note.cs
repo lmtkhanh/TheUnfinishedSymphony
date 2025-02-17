@@ -1,10 +1,13 @@
+using UnityEditor;
 using UnityEngine;
 
 public class Note : MonoBehaviour
 {
     private SpriteRenderer spriteRenderer; // Reference to the note's sprite renderer
 
-    private float hitPointX;
+    private int mode;
+
+    private Vector2 targetPosition;
     private float speed;
 
     private BeatManager beatManager;
@@ -17,9 +20,10 @@ public class Note : MonoBehaviour
     private bool isHit = false; // Track if the note has been hit already
 
     // Initialize method
-    public void Initialize(float beat, float hitPointX, float speed, BeatManager beatManager)
+    public void Initialize(int mode, float beat, Vector2 targetPosition, float speed, BeatManager beatManager)
     {
-        this.hitPointX = hitPointX; // The X position of the hit point
+        this.mode = mode;
+        this.targetPosition = targetPosition;
         this.speed = speed; // The speed at which the note will move
         this.beatManager = beatManager; // Reference to the BeatManager for DSP timing
 
@@ -66,33 +70,56 @@ public class Note : MonoBehaviour
 
     void Update()
     {
-        // Move the note to the left based on speed and time passed
-        transform.position += Vector3.left * speed * Time.deltaTime;
+        if (mode == 1)
+        {
+            attackNoteUpdate();
+        }
+        else if (mode == 2)
+        {
+            defendNoteUpdate();
+        }
+    }
 
-        double currentDspTime = AudioSettings.dspTime;
-        float timeDifference = Mathf.Abs((float)(currentDspTime - targetHitTime));
-        if (timeDifference <= hitTolerance)
-        {
-            if (timeDifference <= perfectHitThreshold) // Define a smaller threshold for perfect hits
-            {
-                spriteRenderer.color = Color.green; // Perfect hit zone
-             
-            }
-            else
-            {
-                spriteRenderer.color = Color.red; // In range but slightly off
-           
-            }
-        }
-        else
-        {
-            spriteRenderer.color = Color.white; // Out of range
-        }
+    void attackNoteUpdate()
+    {
+        // Move the note towards the target position (based on x and y)
+        transform.position = Vector3.MoveTowards(transform.position, new Vector3(targetPosition.x, transform.position.y, transform.position.z), speed * Time.deltaTime);
 
         // Destroy if it reaches the end point (missed note)
-        if (transform.position.x <= hitPointX - 5) // Adjust end point as needed
+        if (transform.position.x <= targetPosition.x - 5) // Adjust end point as needed
         {
             Destroy(gameObject); // Remove the note when it reaches this point
         }
     }
+
+    void defendNoteUpdate()
+    {
+        // Move the note instantly towards the target position
+        transform.position = Vector3.MoveTowards(transform.position, new Vector3(targetPosition.x, targetPosition.y, transform.position.z), 50 * Time.deltaTime);
+
+        // Optionally, you can destroy the note right after it reaches the target (if you want to remove it immediately after reaching)
+        //Destroy(gameObject);
+    }
 }
+
+/** FOR TESTING
+       double currentDspTime = AudioSettings.dspTime;
+       float timeDifference = Mathf.Abs((float)(currentDspTime - targetHitTime));
+       if (timeDifference <= hitTolerance)
+       {
+           if (timeDifference <= perfectHitThreshold) // Define a smaller threshold for perfect hits
+           {
+               spriteRenderer.color = Color.green; // Perfect hit zone
+            
+           }
+           else
+           {
+               spriteRenderer.color = Color.red; // In range but slightly off
+          
+           }
+       }
+       else
+       {
+           spriteRenderer.color = Color.white; // Out of range
+       }
+       */

@@ -608,8 +608,9 @@ MonoBehaviour:
   currentSong: {fileID: 0}
   songManager: {fileID: 587459920}
   audioManager: {fileID: 483278920}
+  combatStateManager: {fileID: 1825297035}
   noteSpawner: {fileID: 1321420712}
-  dspTimeText: {fileID: 1659017279}
+  songStarted: 0
   dspTimeSongStart: 0
   dspTimeOffset: 0
   currentBeat: 0
@@ -808,8 +809,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   notePrefab: {fileID: 9058739170749450727, guid: f39b5c3665fe39b46ac3c2d5990b4b7f, type: 3}
   folderObject: {fileID: 2049566939}
+  player: {fileID: 1580711126}
+  enemy: {fileID: 134057236}
   hitPointObject: {fileID: 1414873487}
-  beatsToHitPoint: 4
+  attackBeatsToHitPoint: 4
 --- !u!4 &1321420713
 Transform:
   m_ObjectHideFlags: 0
@@ -1291,9 +1294,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   gameState: 0
-  currentBeat: 0
-  lastLoggedBeat: -1
+  lastCheckedTime: -1
   beatManager: {fileID: 627446222}
+  modeText: {fileID: 1659017279}
 --- !u!4 &1825297036
 Transform:
   m_ObjectHideFlags: 0
