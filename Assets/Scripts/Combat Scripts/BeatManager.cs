@@ -1,78 +1,108 @@
+using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Events;
 
 public class BeatManager : MonoBehaviour
 {
-    public Song currentSong;           // Reference to the current song (TestSong)
-    public SongManager songManager;    // Reference to the SongManager for playing the song
-    public AudioManager audioManager;  // Reference to AudioManager for playing the beat sound
-    private AudioSource audioSource;   // AudioSource used to play the song
-    private float bpm;                 // BPM of the song
-    private float crotchet;            // Duration of a beat (crotchet) in seconds
-    private float songPosition;        // Current song position (in seconds)
-    private float lastBeat;            // Last beat position in the song
-    private double dspTimeSong;        // DSP time when the song started (for synchronization)
-    private float offset;              // Offset for the song to handle MP3 gaps
-    private float gracePeriod = 0.2f;  // Grace period for hitting the beat (±100ms)
+    public Song currentSong;
+    public SongManager songManager;
+    public AudioManager audioManager;
+    private AudioSource audioSource;
 
-    void Start()
-    {
-        // Set up the current song and SongManager
-        currentSong = new TestSong();  // Initialize with a test song (replace with your actual song)
-        audioSource = songManager.audioSource;  // Get AudioSource from SongManager
-        bpm = currentSong.BPM;  // Get BPM from the current song
+    private float songBPM;
+    private float crotchet; // Duration of one beat
+    public double dspTimeSongStart;
+    public double dspTimeOffset; // original difference between song start dsp time and actual dsp time at the time.
+    private double nextBeatTime;
 
-        // Calculate the duration of a beat (crotchet)
-        crotchet = 60f / bpm;
+    public int currentBeat;
 
-        // Record the DSP time at the moment the song starts
-        dspTimeSong = AudioSettings.dspTime;
-
-        // Start the song via SongManager
-        currentSong.PlaySong(songManager);
-
-        // Initialize offset (for handling any small start gaps in MP3)
-        offset = 0f;
-        lastBeat = 0f;
-    }
+    private bool songStarted = false;
+    public NoteSpawner noteSpawner;
 
     void Update()
     {
-        // Calculate current song position in seconds using the DSP time
-        songPosition = (float)((AudioSettings.dspTime - dspTimeSong) * audioSource.pitch) - offset;
-
-        // Check if the song has progressed to the next beat
-        if (songPosition > lastBeat + crotchet)
+        if (!songStarted && Input.GetKeyDown(KeyCode.Space))
         {
-            // Play the beat sound or trigger other actions
-            audioManager.playBeatSound();
-
-            // Update the last beat time to prevent redundancy
-            lastBeat += crotchet;
-            // Check for key press
-            
-        }
-        if (Input.GetKeyDown(KeyCode.A))
-        {
-            CheckTiming();
+            startSong();
         }
 
+        if (songStarted)
+        {
+            // Check and spawn notes based on beats before they arrive
+            CheckAndSpawnNotes();
 
+            // Schedule the next beat only when the current DSP time is beyond the next beat
+            if (AudioSettings.dspTime >= nextBeatTime)
+            {
+                ScheduleNextBeat();
+            }
+        }
     }
 
-    void CheckTiming()
+    void startSong()
     {
-        // Calculate the difference between current song position and last beat
-        float timeSinceLastBeat = Mathf.Abs(songPosition - lastBeat);
+        songStarted = true;
+        currentSong = new TestSong();
+        songBPM = currentSong.BPM;
+        currentBeat = 0;
+        audioSource = songManager.audioSource;
 
-        // Check if key press is within the grace period
-        if (timeSinceLastBeat <= gracePeriod)
+        crotchet = 60.0f / songBPM; // Duration of a single beat
+        noteSpawner.setNoteSpeed(); // Update note speed based on BPM
+
+        currentSong.PlaySong(songManager);
+        dspTimeSongStart = AudioSettings.dspTime; // Reference time
+        nextBeatTime = dspTimeSongStart + currentSong.offset;
+    }
+
+    void ScheduleNextBeat()
+    {
+        audioManager.playBeatSound(nextBeatTime);
+        if (currentBeat == 8) currentBeat = 0;
+        currentBeat++;
+
+        nextBeatTime += crotchet;
+    }
+
+    void CheckAndSpawnNotes()
+    {
+        // Check if we have beats left to spawn
+        if (currentSong.beatsToHit.Count > 0)
         {
-            Debug.Log("Hit");
-        }
-        else
-        {
-            Debug.Log("Miss");
+            // Get the first beat from the list
+            float nextBeat = currentSong.beatsToHit[0];
+
+            // Calculate the DSP time for 4 beats before the current beat
+            double dspTimeForNoteSpawn = GetDspTimeForBeat(nextBeat - 4);
+
+            // Check if the current DSP time is within the window for spawning the note
+            if (AudioSettings.dspTime >= dspTimeForNoteSpawn && AudioSettings.dspTime < dspTimeForNoteSpawn + crotchet)
+            {
+                // Spawn note for this hit point
+                noteSpawner.SpawnNote();
+                Debug.Log("spawned!");
+
+                // Remove the beat from the list after it has been processed
+                currentSong.beatsToHit.RemoveAt(0);
+            }
         }
     }
+
+    public double GetDspTimeForBeat(float beatTime)
+    {
+        // Convert the beat time to DSP time relative to the song's start
+        return dspTimeSongStart + (beatTime * crotchet) + currentSong.offset;
+    }
+
+    public float getCrotchet()
+    {
+        return crotchet;
+    }
+
+    public int getCurrentBeat()
+    {
+        return currentBeat;
+    }
+
+    
 }

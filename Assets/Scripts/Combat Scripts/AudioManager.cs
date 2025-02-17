@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -7,22 +8,10 @@ public class AudioManager : MonoBehaviour
     public AudioSource audioSource;
     public AudioClip beat;
 
-    // Start is called before the first frame update
-    void Start()
+    public void playBeatSound(double playTime)
     {
-
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-
-    }
-
-    public void playBeatSound()
-    {
-       audioSource.clip = beat;
-       audioSource.PlayOneShot(beat);
+        audioSource.clip = beat;
+        audioSource.PlayScheduled(playTime);
     }
 
 }
