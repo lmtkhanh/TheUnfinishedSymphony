@@ -6,9 +6,12 @@ using TMPro;
 
 public class DialogueManager : MonoBehaviour
 {
-    public PlayerManager player; // ref to player
+    public PlayerController player; // ref to player
     public TextMeshProUGUI nameText;
     public TextMeshProUGUI dialogueText;
+    public Image characterPortrait;
+    public Sprite playerPortrait; //player portrait
+    private Sprite npcPortrait;  //npc portrait
 
     public Animator animator;
 
@@ -22,12 +25,14 @@ public class DialogueManager : MonoBehaviour
         
     }
 
-    public void StartDialogue(Dialogue dialogue){
+    public void StartDialogue(Dialogue dialogue, Sprite npcPortraitSprite){
+        Debug.Log("NPC Portrait Assigned: " + npcPortraitSprite.name);
         player.StopPlayerMovement(); //prevent player from moving while dialogue is running
 
         animator.SetBool("isOpen", true);
         nameText.text = dialogue.npcName;
         npcName = dialogue.npcName;
+        npcPortrait = npcPortraitSprite;
 
         sentences.Clear();
         isPlayerSpeakingQueue.Clear();
@@ -49,7 +54,17 @@ public class DialogueManager : MonoBehaviour
         string sentence = sentences.Dequeue();
         bool isPlayerSpeaking = isPlayerSpeakingQueue.Dequeue();
 
-        nameText.text = isPlayerSpeaking ? "Lucien" : npcName; //change character name
+        // Change character name and portrait dynamically
+        if (isPlayerSpeaking)
+        {
+            nameText.text = "Lucien"; // Player's name
+            characterPortrait.sprite = playerPortrait;
+        }
+        else
+        {
+            nameText.text = npcName;
+            characterPortrait.sprite = npcPortrait;
+        }
 
         StopAllCoroutines();
         StartCoroutine(TypeSentence (sentence));
