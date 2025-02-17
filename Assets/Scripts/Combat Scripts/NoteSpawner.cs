@@ -43,7 +43,7 @@ public class NoteSpawner : MonoBehaviour
         noteSpeed = distanceToHitPoint / timeToHitPoint;
     }
 
-    public void SpawnNote(float beat)
+    public Note SpawnNote(float beat)
     {
         //set the spawn point, x equal some arbitary spawn point (adjust), y is just the y value of the attack bar object
         Vector2 folderPosition = folderObject.transform.position;
@@ -54,5 +54,6 @@ public class NoteSpawner : MonoBehaviour
         GameObject newNote = Instantiate(notePrefab, spawnPosition, Quaternion.identity);
         Note note = newNote.GetComponent<Note>();
         note.Initialize(beat, hitPointObject.transform.position.x, noteSpeed, beatManager);
+        return note;
     }
 }

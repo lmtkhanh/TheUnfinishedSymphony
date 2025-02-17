@@ -6,10 +6,11 @@ public class Note : MonoBehaviour
 
     private float hitPointX;
     private float speed;
+
     private BeatManager beatManager;
     private AudioManager audioManager;
 
-    float hitTolerance = 0.3f; // Total time window to register a hit
+    float hitTolerance = 0.2f; // Total time window to register a hit
     float perfectHitThreshold = 0.1f; // Smaller window for a perfect hit
     private double targetHitTime;
 
@@ -35,11 +36,8 @@ public class Note : MonoBehaviour
         targetHitTime = beatManager.GetDspTimeForBeat(beat);
     }
 
-    void Update()
+    public int checkIfHit()
     {
-        // Move the note to the left based on speed and time passed
-        transform.position += Vector3.left * speed * Time.deltaTime;
-
         // Check if the note is within the tolerance range of the target DSP time (timing-based hit)
         double currentDspTime = AudioSettings.dspTime;
 
@@ -51,19 +49,39 @@ public class Note : MonoBehaviour
             if (timeDifference <= perfectHitThreshold) // Define a smaller threshold for perfect hits
             {
                 spriteRenderer.color = Color.green; // Perfect hit zone
+                return 2;
             }
             else
             {
                 spriteRenderer.color = Color.red; // In range but slightly off
+                return 1;
             }
+        }
+        else
+        {
+            spriteRenderer.color = Color.white; // Out of range
+        }
+        return 0;
+    }
 
-            // Check if the player presses 'A' during this moment and it hasn't already been hit
-            if (!isHit && Input.GetKeyDown(KeyCode.A))
+    void Update()
+    {
+        // Move the note to the left based on speed and time passed
+        transform.position += Vector3.left * speed * Time.deltaTime;
+
+        double currentDspTime = AudioSettings.dspTime;
+        float timeDifference = Mathf.Abs((float)(currentDspTime - targetHitTime));
+        if (timeDifference <= hitTolerance)
+        {
+            if (timeDifference <= perfectHitThreshold) // Define a smaller threshold for perfect hits
             {
-                audioManager.playHitSoundA();
-                isHit = true; // Mark the note as hit
-
-                Destroy(gameObject); // Destroy the note if 'A' is pressed
+                spriteRenderer.color = Color.green; // Perfect hit zone
+             
+            }
+            else
+            {
+                spriteRenderer.color = Color.red; // In range but slightly off
+           
             }
         }
         else

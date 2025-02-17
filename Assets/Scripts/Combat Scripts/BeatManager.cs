@@ -28,6 +28,9 @@ public class BeatManager : MonoBehaviour
 
     public int currentBeat;  //calculate current beat
 
+    //current list of active notes
+    private List<Note> activeNotes = new List<Note>();
+
     void Update()
     {
         //press space bar to start the song
@@ -42,16 +45,58 @@ public class BeatManager : MonoBehaviour
             dspTimeText.text = "DSP Time: " + AudioSettings.dspTime.ToString("F3"); // Show DSP time with 3 decimal places
         }
 
-        //code for gameplay once song started
+        //----------------------------------code for gameplay once song started-------------------------------------
         if (songStarted)
         {
             CheckAndSpawnNotes(); // Check and spawn notes based on beats before they arrive
+            CheckAndDeleteNotes(); // check if there's any destroyed notes, if yes remove from list
+
+            //player hit
+            if (Input.GetKeyDown(KeyCode.A))
+            {
+                audioManager.playHitSoundA();
+
+                bool noteHit = false; // Flag to track if we've already hit a note.
+
+                // Loop through all active notes and check if one can be hit
+                for (int i = activeNotes.Count - 1; i >= 0; i--)
+                {
+                    Note note = activeNotes[i];
+
+                    // Call checkIfHit() for each note to determine if it's hit
+                    int hitResult = note.checkIfHit();
+
+                    // Check if the hit result is either perfect (2) or slightly missed (1), and hit only one note at a time
+                    if (!noteHit && (hitResult == 2 || hitResult == 1))
+                    {
+                        noteHit = true; // Mark that we've hit a note
+
+                        // If it's a perfect hit
+                        if (hitResult == 2)
+                        {
+                            Debug.Log("Perfect hit!");
+                        }
+                        // If it's a slight miss
+                        else if (hitResult == 1)
+                        {
+                            Debug.Log("Slight miss!");
+                        }
+
+                        // Destroy the note after hitting it
+                        Destroy(note.gameObject);
+
+                        // Break the loop to ensure only one note is hit per press
+                        break;
+                    }
+                }
+            }
 
             if (AudioSettings.dspTime >= nextBeatTime) // Schedule the next beat only when the current DSP time is beyond the next beat
             {
                 ScheduleNextBeat();
             }
         }
+
     }
 
     //game initialization. Set up the song before playing
@@ -92,9 +137,27 @@ public class BeatManager : MonoBehaviour
 
             if (AudioSettings.dspTime >= dspTimeForNoteSpawn && AudioSettings.dspTime < dspTimeForNoteSpawn + crotchet)
             {  
-                noteSpawner.SpawnNote(nextBeat);
-     
+                Note createdNote = noteSpawner.SpawnNote(nextBeat);
+                activeNotes.Add(createdNote);
+
                 currentSong.beatsToHit.RemoveAt(0); // remove the beat from the list after it has been processed
+            }
+        }
+    }
+
+    //------------------------------checking if notes need to be deleted, and delete them-----------------------------
+    void CheckAndDeleteNotes()
+    {
+        // Iterate through the activeNotes list from the last to the first element
+        for (int i = activeNotes.Count - 1; i >= 0; i--)
+        {
+            Note note = activeNotes[i];
+
+            // Check if the note is null (which means it's been destroyed) or if it's no longer in the scene
+            if (note == null)
+            {
+                // Remove the destroyed note from the list
+                activeNotes.RemoveAt(i);
             }
         }
     }
