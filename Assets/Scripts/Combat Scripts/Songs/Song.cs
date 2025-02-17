@@ -5,18 +5,15 @@ using UnityEngine;
 
 public class Song : MonoBehaviour
 {
-    public List<float> beatsToHit; // List of beats where the notes should be hit
-    public BeatManager beatManager;
-
-    private List<double> spawnTimes; // List of dspTimes when notes should spawn
-
+    public List<float> beatsToHit; // List of beats where the notes should be hit, set this manually
 
     //the BPM of the song
     public float BPM;
 
-    //Just in case the music file has a slight delay at the beginning before the music starts, use this to delay the beat counting.
+    //Just in case the music file has a slight delay at the beginning before the music starts, use this to delay the beat counting. Also set manually
     public float offset;
 
+    //function that plays the song, use song manager
     public virtual void PlaySong(SongManager songManager)
     {
     }

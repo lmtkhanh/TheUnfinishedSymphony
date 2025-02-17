@@ -2,17 +2,21 @@ using UnityEngine;
 
 public class Note : MonoBehaviour
 {
+    private SpriteRenderer spriteRenderer; // Reference to the note's sprite renderer
+
     private float hitPointX;
     private float speed;
     private BeatManager beatManager;
+    private AudioManager audioManager;
 
-    private SpriteRenderer spriteRenderer; // Reference to the note's sprite renderer
-
-    public float hitTolerance = 0.5f; // Tolerance for when the note is near the hit point (in seconds)
+    float hitTolerance = 0.3f; // Total time window to register a hit
+    float perfectHitThreshold = 0.1f; // Smaller window for a perfect hit
     private double targetHitTime;
 
+    private bool isHit = false; // Track if the note has been hit already
+
     // Initialize method
-    public void Initialize(float hitPointX, float speed, BeatManager beatManager)
+    public void Initialize(float beat, float hitPointX, float speed, BeatManager beatManager)
     {
         this.hitPointX = hitPointX; // The X position of the hit point
         this.speed = speed; // The speed at which the note will move
@@ -20,8 +24,15 @@ public class Note : MonoBehaviour
 
         spriteRenderer = GetComponent<SpriteRenderer>(); // Get reference to the sprite renderer
 
-        // Calculate the target hit time based on the beat manager's DSP time
-        targetHitTime = beatManager.GetDspTimeForBeat(6); // Use 6 as an example for now (can be dynamic based on beats)
+        // Get AudioManager reference
+        audioManager = FindObjectOfType<AudioManager>();
+        if (audioManager == null)
+        {
+            Debug.LogError("AudioManager not found in the scene!");
+        }
+
+        // Calculate the target hit time of this note based on the beat manager's DSP time
+        targetHitTime = beatManager.GetDspTimeForBeat(beat);
     }
 
     void Update()
@@ -31,19 +42,38 @@ public class Note : MonoBehaviour
 
         // Check if the note is within the tolerance range of the target DSP time (timing-based hit)
         double currentDspTime = AudioSettings.dspTime;
-        Debug.Log("currentDsptime: " + currentDspTime);
-        Debug.Log("target Hit Time: " + targetHitTime);
 
         // If the current DSP time is within tolerance of the target hit time, change color to red
-        if (Mathf.Abs((float)(currentDspTime - targetHitTime)) <= hitTolerance)
+        // Check if the note is close to the target hit time
+        float timeDifference = Mathf.Abs((float)(currentDspTime - targetHitTime));
+        if (timeDifference <= hitTolerance)
         {
-            spriteRenderer.color = Color.red; // Change color to red when near the hit point
+            if (timeDifference <= perfectHitThreshold) // Define a smaller threshold for perfect hits
+            {
+                spriteRenderer.color = Color.green; // Perfect hit zone
+            }
+            else
+            {
+                spriteRenderer.color = Color.red; // In range but slightly off
+            }
+
+            // Check if the player presses 'A' during this moment and it hasn't already been hit
+            if (!isHit && Input.GetKeyDown(KeyCode.A))
+            {
+                audioManager.playHitSoundA();
+                isHit = true; // Mark the note as hit
+
+                Destroy(gameObject); // Destroy the note if 'A' is pressed
+            }
+        }
+        else
+        {
+            spriteRenderer.color = Color.white; // Out of range
         }
 
         // Destroy if it reaches the end point (missed note)
-        if (transform.position.x <= hitPointX - 2) // Adjust end point as needed
+        if (transform.position.x <= hitPointX - 5) // Adjust end point as needed
         {
-            Debug.Log("Destroying note at dspTime: " + currentDspTime);
             Destroy(gameObject); // Remove the note when it reaches this point
         }
     }
