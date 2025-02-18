@@ -9,9 +9,16 @@ public class NPC : Interactable
 
     public override void Interact() //trigger dialogue
     {   
+        isInteracting = true;
+        DialogueManager dialogueManager = FindObjectOfType<DialogueManager>();
+        dialogueManager.StartDialogue(dialogue, portraitSprite, this);
+
+    }
+
+    public virtual void CompleteInteraction()
+    {
+        isInteracting = false;
         hasInteracted = true;
-        FindObjectOfType<DialogueManager>().StartDialogue(dialogue, portraitSprite);
-        
     }
 
 }

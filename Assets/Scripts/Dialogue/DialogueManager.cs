@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 
+
 public class DialogueManager : MonoBehaviour
 {
     public PlayerController player; // ref to player
@@ -12,12 +13,15 @@ public class DialogueManager : MonoBehaviour
     public Image characterPortrait;
     public Sprite playerPortrait; //player portrait
     private Sprite npcPortrait;  //npc portrait
+    private NPC currentNPC;
 
     public Animator animator;
 
     private Queue<string> sentences;
     private Queue<bool> isPlayerSpeakingQueue;
     private string npcName;
+
+    
     void Start()
     {
         sentences = new Queue<string>();
@@ -25,8 +29,9 @@ public class DialogueManager : MonoBehaviour
         
     }
 
-    public void StartDialogue(Dialogue dialogue, Sprite npcPortraitSprite){
+    public void StartDialogue(Dialogue dialogue, Sprite npcPortraitSprite, NPC npc){
         Debug.Log("NPC Portrait Assigned: " + npcPortraitSprite.name);
+        currentNPC = npc;
         player.StopPlayerMovement(); //prevent player from moving while dialogue is running
 
         animator.SetBool("isOpen", true);
@@ -82,6 +87,11 @@ public class DialogueManager : MonoBehaviour
     void EndDialogue(){
         animator.SetBool("isOpen", false);
         player.StartPlayerMovement();
+
+        if (currentNPC != null)
+        {
+            currentNPC.CompleteInteraction();
+        }
         
     }
 

@@ -11,6 +11,7 @@ public class Interactable : MonoBehaviour
     public bool isInteracting = false;
     public virtual void Interact() //override
     {
+        isInteracting = true;
         Debug.Log("Interacted with " + gameObject.name);
     }
 }

@@ -88,7 +88,7 @@ public class PlayerController: MonoBehaviour
 
     void CollectCoin(GameObject coin)
     {
-        playerManager.UpdateCoinCount();
+        playerManager.UpdateCoinCount(1);
         Destroy(coin);
     }
 
@@ -103,7 +103,7 @@ public class PlayerController: MonoBehaviour
         foreach (Collider2D collider in colliders)
         {
             Interactable interactable = collider.GetComponent<Interactable>();
-            if (interactable != null && !interactable.hasInteracted)
+            if (interactable != null && !interactable.isInteracting)
             {
                 float distance = Vector2.Distance(transform.position, collider.transform.position);
                 if (distance < closestDistance)
