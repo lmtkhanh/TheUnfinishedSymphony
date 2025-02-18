@@ -1081,20 +1081,27 @@ MonoBehaviour:
     npcName: Aldric
     sentences:
     - "Lucien\u2026 you came."
-    - A-Aldric? Is that you? What happened? What do you want from me?
-    - "The symphony\u2026 it demands completion, Lucien. It has waited too long."
-    - "You expect me to finish your work? I can\u2019t...Why me?"
-    - "Because you are the only one who can. You have my name\u2026 my talent\u2026
-      and now, my fate. You must finish it. Nothing is set right until it is done,
-      no one can leave, not me not you... "
+    - "A-Aldric? Is that really you? What is this place? What\u2026 happened to you?"
+    - "The symphony\u2026 it demands completion, Lucien. It has waited too long,
+      trapped in silence, just as I have."
+    - "You expect me to finish it? I\u2014I\u2019m not you. I don\u2019t even know
+      where to start."
+    - "You must, Lucien. You are the only one who can. You carry my name\u2026 my
+      talent\u2026 and now, my fate. Nothing is set right until it is done, no one
+      can leave, not me not you... "
     - But how... how do I finish it on my own?
-    - 'The pieces are here, within this Opera House, scattered in the shadows. This
-      place exists between worlds, where music transcends life and death, the past
-      and the present. '
-    - Lucien, you can hear the voices of those who once stood here and witness the
-      stories that once happened. Tread carefully, my dearest grandson, and find
-      what you need to complete my masterpiece.
-    isPlayerSpeaking: 0001000100010000
+    - 'The symphony is fragmented, scattered across these halls. Some movements were
+      stolen, others lost to time. '
+    - I don't know where to start, this place is huge.
+    - 'In here, music transcends life and death, the past and the present. Lucien,
+      you can hear the voices of those who once stood here and witness the stories
+      that once happened. '
+    - But you must tread carefully. Not all voices wish to be remembered. Not all
+      shadows wish to remain in silence.
+    - Are you coming with me...?
+    - "I cannot...I am bound to this room. But here\u2026 the first movement. I have
+      held onto it, but it remains incomplete. Let me show you."
+    isPlayerSpeaking: 000100010001000100000100
 --- !u!212 &390049319
 SpriteRenderer:
   m_ObjectHideFlags: 0
