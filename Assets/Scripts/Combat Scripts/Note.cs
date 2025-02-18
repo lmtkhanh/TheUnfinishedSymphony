@@ -108,7 +108,7 @@ public class Note : MonoBehaviour
         if (isCharging)
         {
             // Move the note instantly towards the target position (with high speed)
-            transform.position = Vector3.MoveTowards(transform.position, new Vector3(targetPosition.x, targetPosition.y, transform.position.z), 30 * Time.deltaTime);
+            transform.position = Vector3.MoveTowards(transform.position, new Vector3(targetPosition.x, targetPosition.y, transform.position.z), 40 * Time.deltaTime);
 
             // Optionally, destroy the note when it reaches the target position
             if (transform.position == new Vector3(targetPosition.x, targetPosition.y, transform.position.z))

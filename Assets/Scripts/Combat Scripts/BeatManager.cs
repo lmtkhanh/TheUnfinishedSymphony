@@ -58,7 +58,7 @@ public class BeatManager : MonoBehaviour
             CheckAndDeleteNotes(); // check if there's any destroyed notes, if yes remove from list
 
             //player hit
-            if (Input.GetKeyDown(KeyCode.A))
+            if (Input.GetKeyDown(KeyCode.A) || Input.GetKeyDown(KeyCode.J))
             {
                 //set up default behavior when player press the key during attack and defend mode
                 if (combatStateManager.gameState == 1) audioManager.playHitSoundA();
