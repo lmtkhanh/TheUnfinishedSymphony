@@ -55,7 +55,7 @@ public class NoteSpawner : MonoBehaviour
             //set the spawn point, x equal some arbitary spawn point (adjust), y is just the y value of the attack bar object
             Vector2 folderPosition = folderObject.transform.position;
             float spawnX = Camera.main.ScreenToWorldPoint(new Vector2(Screen.width, 0)).x + 1;
-            Vector2 spawnPosition = new Vector2(spawnX, folderPosition.y - 1.12f);
+            Vector2 spawnPosition = new Vector2(spawnX, folderPosition.y - 2.06f);
 
             //instantiate the note
             GameObject newNote = Instantiate(notePrefab, spawnPosition, Quaternion.identity);
@@ -64,23 +64,31 @@ public class NoteSpawner : MonoBehaviour
             return note; 
     }
 
-    public Note SpawnDefendNote(float beat)
+    public Note SpawnDefendNote(float beat, int listSize, int position)
     {
-        // Debug.Log("spawning defend mode notes");
+        // Reference the character's position
+        Vector2 characterPosition = enemy.transform.position;
 
-        // Reference the character's position directly (assuming you have a character object, e.g., "playerObject")
-        Vector2 characterPosition = enemy.transform.position; // Reference to the character's position
+        // Define arc parameters
+        float radius = 3f; // Distance from the character
+        float arcStartAngle = Mathf.PI / 3; // Start of the arc (60 degrees)
+        float arcEndAngle = -Mathf.PI / 3; // End of the arc (-60 degrees)
 
-        // Define the radius for the curve around the character
-        float radius = 2f;
-        float curveHeightOffset = 1f; // Height offset to ensure the curve is centered around the character
+        // Ensure valid listSize to prevent division by zero
+        if (listSize <= 1)
+        {
+            listSize = 1; // Avoid division errors, just put one note in the center
+        }
 
-        // Calculate the angle for the curve (simple sine wave pattern)
-        float angle = Mathf.PI * (beat % 8); // Use modulo to ensure the beat stays within 8 for idle duration
+        // Calculate the angle step for each note
+        float angleStep = (arcStartAngle - arcEndAngle) / (listSize - 1);
 
-        // Calculate the X and Y positions based on sine and cosine for a curved pattern
+        // Calculate the note's angle based on its position in the list
+        float angle = arcStartAngle - (position - 1) * angleStep; // Subtract instead of add
+
+        // Compute note's X and Y position along the arc
         float xPosition = characterPosition.x + Mathf.Cos(angle) * radius;
-        float yPosition = characterPosition.y + curveHeightOffset + Mathf.Sin(angle) * radius;
+        float yPosition = characterPosition.y + Mathf.Sin(angle) * radius;
 
         Vector2 spawnPosition = new Vector2(xPosition, yPosition);
 
@@ -88,7 +96,6 @@ public class NoteSpawner : MonoBehaviour
         GameObject newNote = Instantiate(notePrefab, spawnPosition, Quaternion.identity);
         Note note = newNote.GetComponent<Note>();
         note.Initialize(2, beat, player.transform.position, 0, beatManager);
-
         return note;
     }
 }

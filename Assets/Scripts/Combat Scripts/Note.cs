@@ -17,7 +17,9 @@ public class Note : MonoBehaviour
     float perfectHitThreshold = 0.1f; // Smaller window for a perfect hit
     private double targetHitTime;
 
-    private bool isHit = false; // Track if the note has been hit already
+    // Variables for Defend Mode
+    private float defendTimer = 8f; // Countdown timer for 8 beats
+    private bool isCharging = false; // Whether the note is charging towards the player
 
     // Initialize method
     public void Initialize(int mode, float beat, Vector2 targetPosition, float speed, BeatManager beatManager)
@@ -83,10 +85,10 @@ public class Note : MonoBehaviour
     void attackNoteUpdate()
     {
         // Move the note towards the target position (based on x and y)
-        transform.position = Vector3.MoveTowards(transform.position, new Vector3(targetPosition.x, transform.position.y, transform.position.z), speed * Time.deltaTime);
+        transform.position = Vector3.MoveTowards(transform.position, new Vector3(targetPosition.x-3, transform.position.y, transform.position.z), speed * Time.deltaTime);
 
-        // Destroy if it reaches the end point (missed note)
-        if (transform.position.x <= targetPosition.x - 5) // Adjust end point as needed
+        // Check if the note has passed the target position by checking its x position
+        if (transform.position.x <= targetPosition.x - 3) // Adjust end point as needed
         {
             Destroy(gameObject); // Remove the note when it reaches this point
         }
@@ -94,11 +96,27 @@ public class Note : MonoBehaviour
 
     void defendNoteUpdate()
     {
-        // Move the note instantly towards the target position
-        transform.position = Vector3.MoveTowards(transform.position, new Vector3(targetPosition.x, targetPosition.y, transform.position.z), 50 * Time.deltaTime);
+        // Check if the current DSP time is close to the target hit time
+        double currentDspTime = AudioSettings.dspTime;
 
-        // Optionally, you can destroy the note right after it reaches the target (if you want to remove it immediately after reaching)
-        //Destroy(gameObject);
+        // If current DSP time is within tolerance range of the target hit time, start charging
+        if (Mathf.Abs((float)(currentDspTime - targetHitTime)) <= hitTolerance && !isCharging)
+        {
+            isCharging = true; // Start charging
+        }
+
+        // If we are in charging mode, move the note instantly towards the target position
+        if (isCharging)
+        {
+            // Move the note instantly towards the target position (with high speed)
+            transform.position = Vector3.MoveTowards(transform.position, new Vector3(targetPosition.x, targetPosition.y, transform.position.z), 30 * Time.deltaTime);
+
+            // Optionally, destroy the note when it reaches the target position
+            if (transform.position == new Vector3(targetPosition.x, targetPosition.y, transform.position.z))
+            {
+                Destroy(gameObject);
+            }
+        }
     }
 }
 

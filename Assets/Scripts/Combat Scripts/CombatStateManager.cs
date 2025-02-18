@@ -9,6 +9,7 @@ public class CombatStateManager : MonoBehaviour
     public int gameState = 0; // 0 = not started, 1 = attack mode, 2 = defend mode
     public double lastCheckedTime = -1.0; // Track last checked DSP time
     public BeatManager beatManager;
+    public GameObject attackBar;
 
     // Just for testing
     public TMP_Text modeText;
@@ -47,6 +48,7 @@ public class CombatStateManager : MonoBehaviour
             if (currentTime >= attackModeTime)
             {
                 gameState = 1; // Attack mode
+                attackBar.SetActive(true);
                 Debug.Log("Switched to Attack Mode!");
                 beatManager.currentSong.attackModeBeats.RemoveAt(0); // Remove processed beat
             }
@@ -59,6 +61,7 @@ public class CombatStateManager : MonoBehaviour
             if (currentTime >= defendModeTime)
             {
                 gameState = 2; // Defend mode
+                attackBar.SetActive(false);
                 Debug.Log("Switched to Defend Mode!");
                 beatManager.currentSong.defendModeBeats.RemoveAt(0); // Remove processed beat
             }

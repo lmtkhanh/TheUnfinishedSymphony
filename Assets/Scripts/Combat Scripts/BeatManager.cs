@@ -30,6 +30,9 @@ public class BeatManager : MonoBehaviour
     //current list of active notes
     private List<Note> activeNotes = new List<Note>();
 
+    //magic shield object
+    public GameObject musicShield;
+
     void Update()
     {
         //press space bar to start the song
@@ -47,7 +50,13 @@ public class BeatManager : MonoBehaviour
             //player hit
             if (Input.GetKeyDown(KeyCode.A))
             {
-                audioManager.playHitSoundA();
+                if (combatStateManager.gameState == 2)
+                {
+                    musicShield.SetActive(true);
+                    Invoke("HideMusicShield", 0.1f); // Hides after 0.1 seconds
+                }
+
+                if(combatStateManager.gameState == 1) audioManager.playHitSoundA();
 
                 bool noteHit = false; // Flag to track if we've already hit a note.
 
@@ -63,6 +72,9 @@ public class BeatManager : MonoBehaviour
                     if (!noteHit && (hitResult == 2 || hitResult == 1))
                     {
                         noteHit = true; // Mark that we've hit a note
+
+                        //play block sound if blocking an attack 
+                        if (combatStateManager.gameState == 2) audioManager.playMusicBlockSound();
 
                         // If it's a perfect hit
                         if (hitResult == 2)
@@ -112,15 +124,24 @@ public class BeatManager : MonoBehaviour
     //---------------------------playing beat sounds every whole beat-----------------------------
     void ScheduleNextBeat()
     {
-        audioManager.playBeatSound(nextBeatTime);
+        //audioManager.playBeatSound(nextBeatTime);
         //if (currentBeat == 8) currentBeat = 0;
         currentBeat++;
+
+        //end of enemy notes spawning during defend, play this quick sound
+        if (currentBeat % 8 == 0 && combatStateManager.gameState == 2)
+        {
+            audioManager.playEndEnemyNoteSpawnSound();
+        }
         Debug.Log(currentBeat);
 
         nextBeatTime += crotchet;
     }
 
     //------------------------------checking if notes need to be spawned, and spawn them-----------------------------
+    int processingDefendList = 0; // Turn to 1 when processing a defend list
+    int currentDefendListSize = 0;
+
     void CheckAndSpawnNotes()
     {
         if (currentSong.attackBeatsToHit.Count > 0 || currentSong.defendBeatsToHit.Count > 0)
@@ -135,7 +156,7 @@ public class BeatManager : MonoBehaviour
                     {
                         nextBeat = currentSong.attackBeatsToHit[0]; // Get the first beat for attack mode
 
-                        dspTimeForNoteSpawn = GetDspTimeForBeat(nextBeat - 4);  // calculate spawn time, 4 beats before the current beat
+                        dspTimeForNoteSpawn = GetDspTimeForBeat(nextBeat - 4);  // Calculate spawn time, 4 beats before the current beat
 
                         if (AudioSettings.dspTime >= dspTimeForNoteSpawn && AudioSettings.dspTime < dspTimeForNoteSpawn + crotchet)
                         {
@@ -150,21 +171,33 @@ public class BeatManager : MonoBehaviour
                 case 2:  // Defend Mode
                     if (currentSong.defendBeatsToHit.Count > 0)
                     {
-                        nextBeat = currentSong.defendBeatsToHit[0][0]; // Get the first beat for attack mode
+                        // If we are not already processing a list, store its size
+                        if (processingDefendList == 0)
+                        {
+                            processingDefendList = 1;  // Mark as processing
+                            currentDefendListSize = currentSong.defendBeatsToHit[0].Count;  // Store list size
+                        }
 
-                        dspTimeForNoteSpawn = GetDspTimeForBeat(nextBeat - 8);  // calculate spawn time, 4 beats before the current beat
+                        nextBeat = currentSong.defendBeatsToHit[0][0]; // Get the first beat for defend mode
+
+                        dspTimeForNoteSpawn = GetDspTimeForBeat(nextBeat - 8);  // Calculate spawn time, 8 beats before the current beat
 
                         if (AudioSettings.dspTime >= dspTimeForNoteSpawn && AudioSettings.dspTime < dspTimeForNoteSpawn + crotchet)
                         {
-                            Note createdNote = noteSpawner.SpawnDefendNote(nextBeat);
+                            int position = currentDefendListSize - currentSong.defendBeatsToHit[0].Count + 1; // Get note position
+
+                            Note createdNote = noteSpawner.SpawnDefendNote(nextBeat, currentDefendListSize, position);
+                            audioManager.playEnemyNotePopSound();
                             activeNotes.Add(createdNote);
 
                             currentSong.defendBeatsToHit[0].RemoveAt(0);
 
-                            // Check if the first inner list is now empty
+                            // If the list is now empty, reset variables and remove it
                             if (currentSong.defendBeatsToHit[0].Count == 0)
                             {
-                                currentSong.defendBeatsToHit.RemoveAt(0);  // Remove the empty inner list
+                                currentSong.defendBeatsToHit.RemoveAt(0);
+                                processingDefendList = 0; // Reset processing flag
+                                currentDefendListSize = 0; // Reset list size
                             }
                         }
                     }
@@ -208,5 +241,9 @@ public class BeatManager : MonoBehaviour
         return currentBeat;
     }
 
-    
+    void HideMusicShield()
+    {
+        musicShield.SetActive(false);
+    }
+
 }
