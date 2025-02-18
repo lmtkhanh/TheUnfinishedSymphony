@@ -15,7 +15,7 @@ public class NPC : Interactable
 
     }
 
-    public void CompleteInteraction()
+    public virtual void CompleteInteraction()
     {
         isInteracting = false;
         hasInteracted = true;

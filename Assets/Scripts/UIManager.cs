@@ -7,6 +7,7 @@ public class UIManager : MonoBehaviour
 {
     public Button exitButton;
     public GameObject inventoryUI;
+    public GameObject shopUI;
 
     // Start is called before the first frame update
     void Start()
@@ -33,6 +34,22 @@ public class UIManager : MonoBehaviour
         if (inventoryUI != null)
         {
             inventoryUI.SetActive(true);
+        }
+    }
+
+    public void HideShopUI()
+    {
+        if (shopUI != null)
+        {
+            shopUI.SetActive(false);
+        }
+    }
+
+    public void ShowShopUI()
+    {
+        if (shopUI != null)
+        {
+            shopUI.SetActive(true);
         }
     }
 }

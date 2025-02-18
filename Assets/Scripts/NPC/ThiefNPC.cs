@@ -5,10 +5,12 @@ using UnityEngine;
 public class ThiefNPC : NPC
 {
     public Dialogue repeatDialogue;
+    public UIManager uiManager;
 
     public override void Interact() //trigger dialogue
     {   
-         if (!hasInteracted)
+        isInteracting = true;
+        if (!hasInteracted)
         {
             FindObjectOfType<DialogueManager>().StartDialogue(dialogue, portraitSprite, this);
         }
@@ -17,5 +19,12 @@ public class ThiefNPC : NPC
             FindObjectOfType<DialogueManager>().StartDialogue(repeatDialogue, portraitSprite, this);
         }
         
+    }
+
+    public override void CompleteInteraction()
+    {
+        isInteracting = false;
+        hasInteracted = true;
+        uiManager.ShowShopUI();
     }
 }

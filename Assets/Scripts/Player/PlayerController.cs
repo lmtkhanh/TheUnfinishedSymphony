@@ -88,7 +88,7 @@ public class PlayerController: MonoBehaviour
 
     void CollectCoin(GameObject coin)
     {
-        playerManager.UpdateCoinCount();
+        playerManager.UpdateCoinCount(1);
         Destroy(coin);
     }
 

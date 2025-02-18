@@ -20,6 +20,8 @@ public class DialogueManager : MonoBehaviour
     private Queue<string> sentences;
     private Queue<bool> isPlayerSpeakingQueue;
     private string npcName;
+
+    
     void Start()
     {
         sentences = new Queue<string>();
