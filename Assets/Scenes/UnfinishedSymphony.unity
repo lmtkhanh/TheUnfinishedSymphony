@@ -1087,7 +1087,14 @@ MonoBehaviour:
     - "Because you are the only one who can. You have my name\u2026 my talent\u2026
       and now, my fate. You must finish it. Nothing is set right until it is done,
       no one can leave, not me not you... "
-    isPlayerSpeaking: 0001000100
+    - But how... how do I finish it on my own?
+    - 'The pieces are here, within this Opera House, scattered in the shadows. This
+      place exists between worlds, where music transcends life and death, the past
+      and the present. '
+    - Lucien, you can hear the voices of those who once stood here and witness the
+      stories that once happened. Tread carefully, my dearest grandson, and find
+      what you need to complete my masterpiece.
+    isPlayerSpeaking: 0001000100010000
 --- !u!212 &390049319
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -2395,8 +2402,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 12
-  m_fontSizeBase: 12
+  m_fontSize: 14
+  m_fontSizeBase: 14
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -2406,8 +2413,8 @@ MonoBehaviour:
   m_VerticalAlignment: 256
   m_textAlignment: 65535
   m_characterSpacing: 0
-  m_wordSpacing: 0
-  m_lineSpacing: 0
+  m_wordSpacing: 5
+  m_lineSpacing: 2
   m_lineSpacingMax: 0
   m_paragraphSpacing: 0
   m_charWidthMaxAdj: 0
@@ -4255,7 +4262,7 @@ MonoBehaviour:
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
   m_fontSizeMax: 72
-  m_fontStyle: 0
+  m_fontStyle: 1
   m_HorizontalAlignment: 1
   m_VerticalAlignment: 256
   m_textAlignment: 65535
