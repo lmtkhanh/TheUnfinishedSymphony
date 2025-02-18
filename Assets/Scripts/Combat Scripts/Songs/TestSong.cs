@@ -16,7 +16,8 @@ public class TestSong : Song
         defendBeatsToHit = new List<List<float>>()
             {
                 new List<float>() {24f, 26f, 28f, 30f }  // Defend Phase 1
-            }; 
+            };
+        songcompleteBeat = 45f;
 
 
         attackModeBeats = new List<float> {0f, 31f};

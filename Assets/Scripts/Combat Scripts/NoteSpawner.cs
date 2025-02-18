@@ -54,13 +54,14 @@ public class NoteSpawner : MonoBehaviour
             //Debug.Log("spawning attack mode notes");
             //set the spawn point, x equal some arbitary spawn point (adjust), y is just the y value of the attack bar object
             Vector2 folderPosition = folderObject.transform.position;
+            Vector2 targetPosition = hitPointObject.transform.position;
             float spawnX = Camera.main.ScreenToWorldPoint(new Vector2(Screen.width, 0)).x + 1;
-            Vector2 spawnPosition = new Vector2(spawnX, folderPosition.y - 2.06f);
+            Vector2 spawnPosition = new Vector2(spawnX, targetPosition.y);
 
             //instantiate the note
             GameObject newNote = Instantiate(notePrefab, spawnPosition, Quaternion.identity);
             Note note = newNote.GetComponent<Note>();
-            note.Initialize(1, beat, hitPointObject.transform.position, noteSpeed, beatManager);
+            note.Initialize(1, beat, targetPosition, noteSpeed, beatManager);
             return note; 
     }
 

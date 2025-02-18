@@ -6,7 +6,7 @@ using UnityEngine.UI;
 
 public class CombatStateManager : MonoBehaviour
 {
-    public int gameState = 0; // 0 = not started, 1 = attack mode, 2 = defend mode
+    public int gameState = 0; // 0 = not started, 1 = attack mode, 2 = defend mode, 98 = victory, 99 = defeat
     public double lastCheckedTime = -1.0; // Track last checked DSP time
     public BeatManager beatManager;
     public GameObject attackBar;
@@ -20,7 +20,15 @@ public class CombatStateManager : MonoBehaviour
 
     void Update()
     {
-        if (beatManager.songStarted)
+        if(gameState == 98)
+        {
+            if (modeText != null)
+            {
+                modeText.text = "YOU WIN";
+            }
+        }
+
+        if (gameState != 98 && gameState != 99 && beatManager.songStarted)
         {
             double currentTime = AudioSettings.dspTime;
 

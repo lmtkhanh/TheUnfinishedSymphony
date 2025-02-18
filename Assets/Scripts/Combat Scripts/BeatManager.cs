@@ -32,6 +32,8 @@ public class BeatManager : MonoBehaviour
 
     //magic shield object
     public GameObject musicShield;
+    public GameObject perfectHitMessage;
+    public GameObject nearMissMessage;
 
     void Update()
     {
@@ -41,8 +43,14 @@ public class BeatManager : MonoBehaviour
             startSong();
         }
 
+        //-----------------------------------check for win or lose condition---------------------------------------
+        if(songStarted && AudioSettings.dspTime >=  GetDspTimeForBeat(currentSong.songcompleteBeat))
+        {
+            combatStateManager.gameState = 98;
+        }
+
         //----------------------------------code for gameplay once song started-------------------------------------
-        if (songStarted)
+        if (songStarted && combatStateManager.gameState != 98 && combatStateManager.gameState != 99)
         {
             CheckAndSpawnNotes(); // Check and spawn notes based on beats before they arrive
             CheckAndDeleteNotes(); // check if there's any destroyed notes, if yes remove from list
@@ -50,15 +58,17 @@ public class BeatManager : MonoBehaviour
             //player hit
             if (Input.GetKeyDown(KeyCode.A))
             {
+                //set up default behavior when player press the key during attack and defend mode
+                if (combatStateManager.gameState == 1) audioManager.playHitSoundA();
                 if (combatStateManager.gameState == 2)
                 {
                     musicShield.SetActive(true);
                     Invoke("HideMusicShield", 0.1f); // Hides after 0.1 seconds
                 }
 
-                if(combatStateManager.gameState == 1) audioManager.playHitSoundA();
-
+                
                 bool noteHit = false; // Flag to track if we've already hit a note.
+
 
                 // Loop through all active notes and check if one can be hit
                 for (int i = activeNotes.Count - 1; i >= 0; i--)
@@ -79,12 +89,19 @@ public class BeatManager : MonoBehaviour
                         // If it's a perfect hit
                         if (hitResult == 2)
                         {
-                            Debug.Log("Perfect hit!");
+                            if (combatStateManager.gameState == 1)
+                            {
+                                perfectHitMessage.SetActive(true);
+                                Invoke("HidePerfectHitMessage", 0.2f); // Hides after 0.2 seconds
+                            }
+                            //Debug.Log("Perfect hit!");
                         }
                         // If it's a slight miss
                         else if (hitResult == 1)
                         {
-                            Debug.Log("Slight miss!");
+                            nearMissMessage.SetActive(true);
+                            Invoke("HideNearMissMessage", 0.2f); // Hides after 0.2 seconds
+                           // Debug.Log("Slight miss!");
                         }
 
                         // Destroy the note after hitting it
@@ -241,9 +258,18 @@ public class BeatManager : MonoBehaviour
         return currentBeat;
     }
 
+    //UI active control
     void HideMusicShield()
     {
         musicShield.SetActive(false);
+    }
+    void HidePerfectHitMessage()
+    {
+        perfectHitMessage.SetActive(false);
+    }
+    void HideNearMissMessage()
+    {
+        nearMissMessage.SetActive(false);
     }
 
 }
