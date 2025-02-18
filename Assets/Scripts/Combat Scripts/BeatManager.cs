@@ -32,6 +32,8 @@ public class BeatManager : MonoBehaviour
 
     //magic shield object
     public GameObject musicShield;
+
+    //note hit messages
     public GameObject perfectHitMessage;
     public GameObject nearMissMessage;
 

@@ -18,7 +18,6 @@ public class Note : MonoBehaviour
     private double targetHitTime;
 
     // Variables for Defend Mode
-    private float defendTimer = 8f; // Countdown timer for 8 beats
     private bool isCharging = false; // Whether the note is charging towards the player
 
     // Initialize method
